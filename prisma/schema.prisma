@@ -2,8 +2,9 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
     previewFeatures = ["jsonProtocol"]
+    output          = "../src/generated/prisma/client"
 }
 
 datasource db {
@@ -11,8 +12,10 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model License {
+    id            String   @id @default(cuid())
+    email         String
+    transactionId String   @unique
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 }

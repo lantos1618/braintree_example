@@ -9,6 +9,11 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     NODE_ENV: z.enum(["development", "test", "production"]),
+    BRAINTREE_PRIVATE_KEY: z.string().min(1),
+    BRAINTREE_MERCHANT_ID: z.string().min(1),
+    EMAIL_HOST: z.string().min(1),
+    EMAIL_USER: z.string().min(1).email(),
+    EMAIL_PASSWORD: z.string().min(1),
   },
 
   /**
@@ -18,6 +23,8 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+    NEXT_PUBLIC_BRAINTREE_PUBLIC_KEY: z.string().min(1),
+
   },
 
   /**
@@ -27,6 +34,13 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    BRAINTREE_PRIVATE_KEY: process.env.BRAINTREE_PRIVATE_KEY,
+    BRAINTREE_MERCHANT_ID: process.env.BRAINTREE_MERCHANT_ID,
+    NEXT_PUBLIC_BRAINTREE_PUBLIC_KEY: process.env.NEXT_PUBLIC_BRAINTREE_PUBLIC_KEY,
+
+    EMAIL_HOST: process.env.EMAIL_HOST,
+    EMAIL_USER: process.env.EMAIL_USER,
+    EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
 });
