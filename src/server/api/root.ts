@@ -9,7 +9,7 @@ import { paypalRouter } from "./routers/paypal";
  */
 export const appRouter = createTRPCRouter({
   license: licenseRouter,
-  braintree: paypalRouter,
+  paypal: paypalRouter,
 });
 
 // export type definition of API

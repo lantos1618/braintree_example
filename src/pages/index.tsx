@@ -4,7 +4,65 @@ import Link from "next/link";
 
 import { api } from "~/utils/api";
 
+import { PayPalNamespace, loadScript } from "@paypal/paypal-js";
+import { useEffect, useRef, useState } from "react";
+import { env } from "~/env.mjs";
+
+const PaypalButton = () => {
+  const [paypal, setPaypal] = useState<PayPalNamespace | null>();
+  const paypalContainerRef = useRef<HTMLDivElement>(null);
+
+  const createOrder  = api.paypal.createOrder.useMutation();
+
+  useEffect(() => {
+    loadScript({ 'client-id': env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,  })
+      .then((paypal) => {
+        setPaypal(paypal);
+      })
+      .catch(err => {
+        console.error('Failed to load PayPal script', err);
+        // Handle failure...
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!paypal) {return}
+    if (!paypal.Buttons) { return }
+    if (!paypalContainerRef.current) { return }
+    if (paypalContainerRef.current.hasChildNodes()) { return }
+
+    paypal.Buttons({
+
+      onApprove: function (data, actions) {
+        const response = createOrder.mutateAsync({
+          amountOfLicenses: 1,
+        })
+
+        return new Promise((resolve, reject) => {
+          response.then((res) => {
+            console.log("res", res)
+            // resolve(res);
+          }
+          ).catch((err) => {
+            reject(err)
+          })
+
+        })
+      },
+
+    }).render(paypalContainerRef.current).catch(err => {
+      console.error('Failed to render PayPal buttons', err);
+      // Handle failure...
+    })
+  }, [paypal, paypalContainerRef]);
+
+
+  return (paypal ? <div ref={paypalContainerRef}></div> : <div>Loading...</div>)
+};
+
+
 const Home: NextPage = () => {
+
 
   return (
     <>
@@ -15,35 +73,9 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
+          <div className="w-[500px] bg-white rounded-md p-5" >
+            <PaypalButton />
           </div>
-          <p className="text-2xl text-white">
-          </p>
         </div>
       </main>
     </>

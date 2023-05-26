@@ -22,15 +22,16 @@ const getAmount = (amountOfLicenses: number) => {
 }
 
 
+
 export const paypalRouter = createTRPCRouter({
   createOrder: publicProcedure
     .input(z.object({ amountOfLicenses: z.number() }))
-    .query(async ({ input}) => {
+    .mutation(async ({ input }) => {
       const { amountOfLicenses } = input;
       const paypalClient = getPaypalClient();
       const amount = getAmount(amountOfLicenses).toString();
 
-      
+
       const request = new paypal.orders.OrdersCreateRequest();
       request.requestBody({
         intent: "CAPTURE",
@@ -40,23 +41,69 @@ export const paypalRouter = createTRPCRouter({
             value: amount,
           },
         }],
+        application_context: {
+          shipping_preference: "NO_SHIPPING",
+        }
       });
+      const response = await paypalClient.execute(request)
 
-      const response = await paypalClient.execute(request);
-      console.log(response.result);
-      
+      // we know it returns an { id }
+      console.log(response);
+      const result = response.result as {
+        id: string;
+        status: string;
+        links: {
+          rel: string;
+          href: string;
+          method: string;
+        }[];
+      }
+
+      return JSON.stringify(request);
+
     }),
-    captureOrder: publicProcedure
+  captureOrder: publicProcedure
     .input(z.object({ orderId: z.string() }))
-    .query(async ({ input}) => {
+    .mutation(async ({ input }) => {
       const { orderId } = input;
       const paypalClient = getPaypalClient();
 
       const request = new paypal.orders.OrdersCaptureRequest(orderId);
-      request.requestBody({});
+      request.requestBody({
+        payment_source: {
+          token: {
+            id: orderId,
+            type: "BILLING_AGREEMENT",
+          },
+        }
+      });
 
       const response = await paypalClient.execute(request);
       console.log(response.result);
-      
+
     })
 });
+
+
+async function get_access_token(
+  client_id: string,
+  client_secret: string,
+  endpoint_url: string
+) {
+  const auth = `${client_id}:${client_secret}`
+  const data = 'grant_type=client_credentials'
+  const response = await fetch(endpoint_url + '/v1/oauth2/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Basic ${Buffer.from(auth).toString('base64')}`
+    },
+    body: data
+  })
+  const json = await response.json() as {
+    scope: string;
+    access_token: string;
+    token_type: string;
+  }
+  return json.access_token
+}
