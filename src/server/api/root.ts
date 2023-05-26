@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { licenseRouter } from "~/server/api/routers/license";
-import { braintreeRouter } from "./routers/braintree";
+import { paypalRouter } from "./routers/paypal";
 
 /**
  * This is the primary router for your server.
@@ -9,7 +9,7 @@ import { braintreeRouter } from "./routers/braintree";
  */
 export const appRouter = createTRPCRouter({
   license: licenseRouter,
-  braintree: braintreeRouter,
+  braintree: paypalRouter,
 });
 
 // export type definition of API
