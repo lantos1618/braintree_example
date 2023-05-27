@@ -64,7 +64,7 @@ export const licenseRouter = createTRPCRouter({
       from: `"License Team" <${EMAIL_HOST}>`, // sender address
       to: input.email, // list of receivers
       subject: "Your License Keys", // Subject line
-      html: getEmailHtml(licenses.map(license => license.transactionId)), // html body
+      html: getEmailHtml(licenses.map(license => license.licenseKey)), // html body
     });
 
     console.log("Message sent: %s", info.messageId);
