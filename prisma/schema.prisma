@@ -15,7 +15,8 @@ datasource db {
 model License {
     id            String   @id @default(cuid())
     email         String
-    transactionId String   @unique
+    invoiceId        String   
+    licenseKey    String   @unique
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
 }
