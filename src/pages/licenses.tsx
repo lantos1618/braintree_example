@@ -23,7 +23,6 @@ const LicensePage: NextPage = () => {
         }
     }
 
-
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2 gap-5">
             <h1>License</h1>
