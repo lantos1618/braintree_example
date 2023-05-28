@@ -6,7 +6,7 @@ import { getPaypalClient } from "~/server/paypal";
 import paypal, { type orders } from "@paypal/checkout-server-sdk";
 import { prisma } from "~/server/db";
 import shortUUID from "short-uuid";
-import { getCost } from "./getCost";
+import { getCost } from "../../getCost";
 
 const translator = shortUUID();
 

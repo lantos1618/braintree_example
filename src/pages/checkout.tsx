@@ -6,7 +6,7 @@ import { api } from "~/utils/api";
 import { type PayPalNamespace, loadScript } from "@paypal/paypal-js";
 import { useEffect, useRef, useState } from "react";
 import { env } from "~/env.mjs";
-import { type Cost, getCost } from "~/server/api/routers/getCost";
+import { type Cost, getCost } from "~/server/getCost";
 
 const PaypalButton: React.FC<{ amountOfLicenses: number }> = ({
   amountOfLicenses
