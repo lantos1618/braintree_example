@@ -3,7 +3,7 @@ import { env } from "~/env.mjs";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { getPaypalClient } from "~/server/paypal";
-import paypal, { orders } from "@paypal/checkout-server-sdk";
+import paypal, { type orders } from "@paypal/checkout-server-sdk";
 import { prisma } from "~/server/db";
 import shortUUID from "short-uuid";
 import { getCost } from "./getCost";
@@ -178,6 +178,7 @@ export const paypalRouter = createTRPCRouter({
 
         })
 });
+
 function generateLicenses(amountOfLicenses: number, invoiceId: string) {
     const licenses = [];
     for (let i = 0; i < amountOfLicenses; i++) {

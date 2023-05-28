@@ -17,9 +17,11 @@
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
 import { prisma } from "~/server/db";
+import requestIp from 'request-ip'
 
-type CreateContextOptions = Record<string, never>;
-
+type CreateContextOptions = {
+  ip: string | null;
+}
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
  * it from here.
@@ -31,8 +33,12 @@ type CreateContextOptions = Record<string, never>;
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+  const { ip } = _opts;
   return {
     prisma,
+    // add ip of request
+    ip
+    
   };
 };
 
@@ -43,7 +49,10 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = (_opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({});
+  const ip = requestIp.getClientIp(_opts.req);
+  return createInnerTRPCContext({
+      ip,
+  });
 };
 
 /**
