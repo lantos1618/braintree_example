@@ -13,6 +13,7 @@ export const env = createEnv({
         EMAIL_HOST: z.string().min(1),
         EMAIL_USER: z.string().min(1).email(),
         EMAIL_PASSWORD: z.string().min(1),
+        LICENSE_HASH_SECRET: z.string().min(1),
     },
 
     /**
@@ -38,6 +39,7 @@ export const env = createEnv({
         EMAIL_HOST: process.env.EMAIL_HOST,
         EMAIL_USER: process.env.EMAIL_USER,
         EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+        LICENSE_HASH_SECRET: process.env.LICENSE_HASH_SECRET,
         // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
     },
 });

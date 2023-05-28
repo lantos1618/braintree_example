@@ -2,21 +2,31 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider        = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
-    output          = "../src/generated/prisma/client"
+  provider        = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"]
+  output          = "../src/generated/prisma/client"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model License {
-    id            String   @id @default(cuid())
-    email         String
-    invoiceId        String   
-    licenseKey    String   @unique
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+  id         String           @id @default(cuid())
+  email      String
+  invoiceId  String
+  licenseKey String           @unique
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  sessions   LicenseSession[]
+}
+
+model LicenseSession {
+  id         String   @id @default(cuid())
+  licenseId  String
+  license    License  @relation(fields: [licenseId], references: [id])
+  computerId String
+  hash       String
+  createdAt  DateTime @default(now())
 }
